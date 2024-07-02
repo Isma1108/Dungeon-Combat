@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ public class Health : MonoBehaviour
 
     [SerializeField]
     private bool isDead = false;
+
+    public GameObject gameOver;
 
 
     private void FixedUpdate()
@@ -54,9 +57,16 @@ public class Health : MonoBehaviour
 
         if (currentHealth <= 0) 
         {
-            //OnDeathWithReference?.Invoke(sender);
-            isDead = true;
-            Destroy(gameObject);
+            if (tag != "player")
+            {
+                isDead = true;
+                Destroy(gameObject);
+            }
+            else
+            {
+                gameOver.SetActive(true);
+                Time.timeScale = 0f;
+            }
         }
         
     }

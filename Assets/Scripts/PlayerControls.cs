@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerControls : MonoBehaviour
 {
@@ -14,6 +15,18 @@ public class PlayerControls : MonoBehaviour
 
     public Animator _swordAnimator;
     public GameObject sword;
+
+    public Animator _bowAnimator;
+    public GameObject bow;
+
+    private bool _swordInUse = true;
+
+    public GameObject arrow;
+    public GameObject firepoint;
+    public float arrow_speed;
+
+    public Image iconSword;
+    public Image iconBow;
 
     private bool _mouseRight;
 
@@ -26,6 +39,7 @@ public class PlayerControls : MonoBehaviour
     private void Awake()
     {
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+       //GameManager.Instance.player = this;
     }
 
     void Start()
@@ -33,6 +47,9 @@ public class PlayerControls : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _mouseRight = true;
         _isPause = false;
+
+        iconSword.color = new Color(1f, 1f, 0f, 0.1f);
+        iconBow.color = new Color(1f, 1f, 1f, 0.1f);
     }
 
     private void FixedUpdate()
@@ -57,7 +74,11 @@ public class PlayerControls : MonoBehaviour
 
     public void onAttack(InputAction.CallbackContext ctx) 
     {
-        if (ctx.performed) Attack();
+        if (ctx.performed)
+        {
+            if (_swordInUse) Attack();
+            else BowAttack();
+        }
     }
 
     public void onMouse(InputAction.CallbackContext ctx)
@@ -74,11 +95,43 @@ public class PlayerControls : MonoBehaviour
         if (ctx.performed) Pause();
     }
 
+    public void onSwitchWeapon(InputAction.CallbackContext ctx)
+    {
+        _swordInUse = !_swordInUse;
+        if (_swordInUse)
+        {
+            sword.SetActive(true);
+            bow.SetActive(false);
+            iconSword.color = new Color(1f, 1f, 0f, 0.1f);
+            iconBow.color = new Color(1f, 1f, 1f, 0.1f);
+        }
+        else
+        {
+            sword.SetActive(false);
+            bow.SetActive(true);
+            iconBow.color = new Color(1f, 1f, 0f, 0.1f);
+            iconSword.color = new Color(1f, 1f, 1f, 0.1f);
+        }
+    }
+
     private void Attack()
     {
         _swordAnimator.SetTrigger("attack");
         sword.GetComponent<SwordScript>().DetectColliders();
         audioManager.PlaySFX(audioManager.swordAttack);
+    }
+
+    private void BowAttack()
+    {
+        var quaternion = Quaternion.identity;
+        if (_mouseRight) quaternion = Quaternion.Euler(0, 0, -90);
+        else quaternion = Quaternion.Euler(0, 0, 90);
+
+        GameObject newArrow = Instantiate(arrow, firepoint.transform.position, quaternion);
+        newArrow.GetComponent<Rigidbody2D>().velocity = new Vector2((firepoint.transform.position.x - transform.position.x), 0f) * arrow_speed;
+        Destroy(newArrow, 1f);
+
+        _bowAnimator.SetTrigger("attack");
     }
 
     public void Pause()

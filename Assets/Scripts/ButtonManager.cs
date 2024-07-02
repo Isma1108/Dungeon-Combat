@@ -18,6 +18,12 @@ public class ButtonManager : MonoBehaviour
         GameManager.Instance.player.GetComponent<PlayerControls>().Pause();
     }
 
+    public void onMainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+
     public void onExit()
     {
         Time.timeScale = 1.0f;
