@@ -20,6 +20,13 @@ public class PlayerControls : MonoBehaviour
     private bool _isPause;
     public GameObject menu;
 
+    private AudioManager audioManager;
+
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
 
     void Start()
     {
@@ -71,6 +78,7 @@ public class PlayerControls : MonoBehaviour
     {
         _swordAnimator.SetTrigger("attack");
         sword.GetComponent<SwordScript>().DetectColliders();
+        audioManager.PlaySFX(audioManager.swordAttack);
     }
 
     public void Pause()
