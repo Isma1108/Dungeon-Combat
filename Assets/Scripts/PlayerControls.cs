@@ -129,7 +129,7 @@ public class PlayerControls : MonoBehaviour
 
         GameObject newArrow = Instantiate(arrow, firepoint.transform.position, quaternion);
         newArrow.GetComponent<Rigidbody2D>().velocity = new Vector2((firepoint.transform.position.x - transform.position.x), 0f) * arrow_speed;
-        Destroy(newArrow, 1f);
+        Destroy(newArrow, 1.5f);
 
         _bowAnimator.SetTrigger("attack");
     }

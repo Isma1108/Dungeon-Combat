@@ -6,6 +6,7 @@ public class SwordScript : MonoBehaviour
 {
     public Transform circleOrigin;
     public float radius;
+    public float force = 10000;
 
     private void OnDrawGizmosSelected()
     {
@@ -22,7 +23,7 @@ public class SwordScript : MonoBehaviour
             if (health = collider.GetComponent<Health>())
             {
                 health.GetHit(1, transform.parent.gameObject);
-            }
+            }            
         }
     }
 
