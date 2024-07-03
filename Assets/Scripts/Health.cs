@@ -60,12 +60,14 @@ public class Health : MonoBehaviour
             if (tag != "player")
             {
                 isDead = true;
+                GameManager.Instance.player._killCounter++;
                 Destroy(gameObject);
             }
             else
             {
                 gameOver.SetActive(true);
                 Time.timeScale = 0f;
+                GameManager.Instance.player.audioManager.musicSource.Stop();
             }
         }
         

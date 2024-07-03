@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,6 +26,11 @@ public class PlayerControls : MonoBehaviour
     public GameObject firepoint;
     public float arrow_speed;
 
+    private float _bowTimer = 0f;
+    public float delayBow;
+    private bool _canUseBow = true;
+
+
     public Image iconSword;
     public Image iconBow;
 
@@ -33,13 +39,19 @@ public class PlayerControls : MonoBehaviour
     private bool _isPause;
     public GameObject menu;
 
-    private AudioManager audioManager;
+    public AudioManager audioManager;
+
+    public TMP_Text textKills;
+    public string initial_text;
+    public float _killCounter = 0;
+
+
 
 
     private void Awake()
     {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
-       //GameManager.Instance.player = this;
+       //audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+       GameManager.Instance.player = this;
     }
 
     void Start()
@@ -52,6 +64,11 @@ public class PlayerControls : MonoBehaviour
         iconBow.color = new Color(1f, 1f, 1f, 0.1f);
     }
 
+    private void Update()
+    {
+        textKills.text = initial_text + _killCounter;
+    }
+
     private void FixedUpdate()
     {
         _rb.velocity = new Vector2(_dir.normalized.x * speed, _dir.normalized.y * speed);
@@ -60,6 +77,12 @@ public class PlayerControls : MonoBehaviour
 
         if (_mouseRight) transform.eulerAngles = new Vector3(0f, 0f, 0f);
         else transform.eulerAngles = new Vector3(0f, 180f, 0f);
+
+        if (_bowTimer > 0)
+        {
+            _bowTimer -= Time.fixedDeltaTime;
+            if (_bowTimer < 0) _canUseBow = true; 
+        }
     }
 
     public void onMovementX(InputAction.CallbackContext ctx)
@@ -77,17 +100,23 @@ public class PlayerControls : MonoBehaviour
         if (ctx.performed)
         {
             if (_swordInUse) Attack();
-            else BowAttack();
+            else
+            {
+                BowAttack();
+            }
         }
     }
 
     public void onMouse(InputAction.CallbackContext ctx)
     {
-        Vector3 mousePos = ctx.ReadValue<Vector2>();
-        mousePos.z = Camera.main.nearClipPlane;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+        if (!_isPause)
+        {
+            Vector3 mousePos = ctx.ReadValue<Vector2>();
+            mousePos.z = Camera.main.nearClipPlane;
+            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        _mouseRight = mousePos.x >= transform.position.x ? true : false;
+            _mouseRight = mousePos.x >= transform.position.x ? true : false;
+        }
     }
 
     public void onPause(InputAction.CallbackContext ctx)
@@ -116,22 +145,32 @@ public class PlayerControls : MonoBehaviour
 
     private void Attack()
     {
-        _swordAnimator.SetTrigger("attack");
-        sword.GetComponent<SwordScript>().DetectColliders();
-        audioManager.PlaySFX(audioManager.swordAttack);
+        if (!_isPause)
+        {
+            _swordAnimator.SetTrigger("attack");
+            sword.GetComponent<SwordScript>().DetectColliders();
+            audioManager.PlaySFX(audioManager.swordAttack);
+        }
     }
 
     private void BowAttack()
     {
-        var quaternion = Quaternion.identity;
-        if (_mouseRight) quaternion = Quaternion.Euler(0, 0, -90);
-        else quaternion = Quaternion.Euler(0, 0, 90);
+        if (!_isPause && _canUseBow)
+        {
+            var quaternion = Quaternion.identity;
+            if (_mouseRight) quaternion = Quaternion.Euler(0, 0, -90);
+            else quaternion = Quaternion.Euler(0, 0, 90);
 
-        GameObject newArrow = Instantiate(arrow, firepoint.transform.position, quaternion);
-        newArrow.GetComponent<Rigidbody2D>().velocity = new Vector2((firepoint.transform.position.x - transform.position.x), 0f) * arrow_speed;
-        Destroy(newArrow, 1.5f);
+            GameObject newArrow = Instantiate(arrow, firepoint.transform.position, quaternion);
+            newArrow.GetComponent<Rigidbody2D>().velocity = new Vector2((firepoint.transform.position.x - transform.position.x), 0f) * arrow_speed;
+            Destroy(newArrow, 1.5f);
 
-        _bowAnimator.SetTrigger("attack");
+            _bowAnimator.SetTrigger("attack");
+            audioManager.PlaySFX(audioManager.bowAttack);
+
+            _canUseBow = false;
+            _bowTimer = delayBow;
+        }
     }
 
     public void Pause()
@@ -141,11 +180,14 @@ public class PlayerControls : MonoBehaviour
         {
             menu.SetActive(true);
             Time.timeScale = 0f;
+            audioManager.musicSource.Pause(); // background music
+
         }
         else
         {
             menu.SetActive(false);
             Time.timeScale = 1f;
+            audioManager.musicSource.UnPause();
         }
     }
 

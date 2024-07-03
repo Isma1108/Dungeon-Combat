@@ -4,12 +4,13 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     [Header("---------- Audio Source ---------")]
-    [SerializeField] AudioSource musicSource;
-    [SerializeField] AudioSource SFXSource;
+    public AudioSource musicSource;
+    public AudioSource SFXSource;
 
     [Header("---------- Audio Clip ---------")]
     public AudioClip background;
     public AudioClip swordAttack;
+    public AudioClip bowAttack;
 
     private void Start()
     {

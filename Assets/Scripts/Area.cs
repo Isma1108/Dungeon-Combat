@@ -10,7 +10,7 @@ public class Area : MonoBehaviour
     {
         if (collision.gameObject.tag == "player")
         {
-            //enemy.canMove = true;
+            enemy.canMove = true;
         }
     }
 
