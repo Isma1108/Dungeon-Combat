@@ -2413,7 +2413,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orc: {fileID: 5760500802837033338, guid: cc70ddf4cf58e9141a4ecdb62986f148, type: 3}
+  monster: {fileID: 5760500802837033338, guid: 11e59dfe52dde90438e56d44f2e403fa, type: 3}
   orcInterval: 5
+  monsterInterval: 10
 --- !u!1 &984380511
 GameObject:
   m_ObjectHideFlags: 0
@@ -2573,6 +2575,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 088582e7e946c2d47b059d07a83c84a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menu: {fileID: 0}
+  controls: {fileID: 0}
 --- !u!114 &1009382432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8592,6 +8596,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 088582e7e946c2d47b059d07a83c84a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menu: {fileID: 0}
+  controls: {fileID: 0}
 --- !u!114 &1786948569
 MonoBehaviour:
   m_ObjectHideFlags: 0
