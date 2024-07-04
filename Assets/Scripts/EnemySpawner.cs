@@ -32,20 +32,21 @@ public class EnemySpawner : MonoBehaviour
         yield return new WaitForSeconds(interval);
         //Hard coded map range
 
-        Vector3 spwan = new Vector3(Random.Range(-6f, 6f), Random.Range(-17f, 2f), 0f);
+        Vector3 spawn = new Vector3(Random.Range(-6f, 6f), Random.Range(-17f, -4f), 0f);
 
-        var xdiff = Mathf.Abs(spwan.x - GameManager.Instance.player.transform.position.x);
-        var ydiff = Mathf.Abs(spwan.y - GameManager.Instance.player.transform.position.y);
+        var xdiff = Mathf.Abs(spawn.x - GameManager.Instance.player.transform.position.x);
+        var ydiff = Mathf.Abs(spawn.y - GameManager.Instance.player.transform.position.y);
 
         while (xdiff <= x_margin || ydiff <= y_margin)
         {
-            spwan = new Vector3(Random.Range(-6f, 6f), Random.Range(-17f, 2f), 0f);
-            xdiff = Mathf.Abs(spwan.x - GameManager.Instance.player.transform.position.x);
-            ydiff = Mathf.Abs(spwan.y - GameManager.Instance.player.transform.position.y);
+            spawn = new Vector3(Random.Range(-6f, 6f), Random.Range(-17f, -4f), 0f);
+            xdiff = Mathf.Abs(spawn.x - GameManager.Instance.player.transform.position.x);
+            ydiff = Mathf.Abs(spawn.y - GameManager.Instance.player.transform.position.y);
         }
 
 
-        GameObject newEnemy = Instantiate(enemy, new Vector3(Random.Range(-6f,6f), Random.Range(-17f, 2f), 0f), Quaternion.identity);
-        StartCoroutine(spawnEnemy(interval, enemy));
+        GameObject newEnemy = Instantiate(enemy, spawn, Quaternion.identity);
+        
+        if (GameManager.Instance.player._killCounter < 20) StartCoroutine(spawnEnemy(interval, enemy));
     }
 }

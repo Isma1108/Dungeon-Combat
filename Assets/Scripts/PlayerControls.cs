@@ -112,7 +112,7 @@ public class PlayerControls : MonoBehaviour
         if (!_isPause)
         {
             Vector3 mousePos = ctx.ReadValue<Vector2>();
-            mousePos.z = Camera.main.nearClipPlane;
+            //mousePos.z = Camera.main.nearClipPlane;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
             _mouseRight = mousePos.x >= transform.position.x ? true : false;

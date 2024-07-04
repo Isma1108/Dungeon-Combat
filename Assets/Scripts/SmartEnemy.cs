@@ -11,7 +11,7 @@ public class SmartEnemy : MonoBehaviour
     public float speed;
     public Transform target;
 
-    public float playerInvulnerabilityTime = 2.0f;
+    public float playerInvulnerabilityTime = 1.4f;
     private float _lastHitTime;
 
 
